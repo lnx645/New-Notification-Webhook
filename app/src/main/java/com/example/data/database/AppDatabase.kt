@@ -8,7 +8,7 @@ import com.example.data.model.AppConfig
 import com.example.data.model.LogItem
 import com.example.data.model.QueueItem
 
-@Database(entities = [QueueItem::class, AppConfig::class, LogItem::class], version = 1, exportSchema = false)
+@Database(entities = [QueueItem::class, AppConfig::class, LogItem::class], version = 2, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun queueDao(): QueueDao
     abstract fun appConfigDao(): AppConfigDao

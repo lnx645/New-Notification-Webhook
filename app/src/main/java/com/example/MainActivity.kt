@@ -7,6 +7,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.automirrored.outlined.List
 import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.Dashboard
 import androidx.compose.material.icons.filled.Settings
@@ -21,6 +23,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.ui.AppListScreen
 import com.example.ui.DashboardScreen
 import com.example.ui.DashboardViewModel
+import com.example.ui.LogsScreen
 import com.example.ui.SettingsScreen
 import com.example.ui.theme.MyApplicationTheme
 
@@ -34,7 +37,7 @@ class MainActivity : ComponentActivity() {
                 val viewModel: DashboardViewModel = viewModel()
                 var currentTab by remember { mutableIntStateOf(0) }
 
-                val tabTitles = listOf("Dashboard", "Daftar Aplikasi", "Pengaturan")
+                val tabTitles = listOf("Dashboard", "Log Webhook", "Daftar Aplikasi", "Pengaturan")
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
@@ -73,7 +76,20 @@ class MainActivity : ComponentActivity() {
                                 onClick = { currentTab = 1 },
                                 icon = {
                                     Icon(
-                                        imageVector = if (currentTab == 1) Icons.Filled.Apps else Icons.Outlined.Apps,
+                                        imageVector = if (currentTab == 1) Icons.AutoMirrored.Filled.List else Icons.AutoMirrored.Outlined.List,
+                                        contentDescription = "Log"
+                                    )
+                                },
+                                label = { Text("Log") },
+                                modifier = Modifier.testTag("nav_logs")
+                            )
+
+                            NavigationBarItem(
+                                selected = currentTab == 2,
+                                onClick = { currentTab = 2 },
+                                icon = {
+                                    Icon(
+                                        imageVector = if (currentTab == 2) Icons.Filled.Apps else Icons.Outlined.Apps,
                                         contentDescription = "Aplikasi"
                                     )
                                 },
@@ -82,11 +98,11 @@ class MainActivity : ComponentActivity() {
                             )
 
                             NavigationBarItem(
-                                selected = currentTab == 2,
-                                onClick = { currentTab = 2 },
+                                selected = currentTab == 3,
+                                onClick = { currentTab = 3 },
                                 icon = {
                                     Icon(
-                                        imageVector = if (currentTab == 2) Icons.Filled.Settings else Icons.Outlined.Settings,
+                                        imageVector = if (currentTab == 3) Icons.Filled.Settings else Icons.Outlined.Settings,
                                         contentDescription = "Pengaturan"
                                     )
                                 },
@@ -99,13 +115,18 @@ class MainActivity : ComponentActivity() {
                     when (currentTab) {
                         0 -> DashboardScreen(
                             viewModel = viewModel,
-                            modifier = Modifier.padding(innerPadding)
+                            modifier = Modifier.padding(innerPadding),
+                            onNavigateToLogs = { currentTab = 1 }
                         )
-                        1 -> AppListScreen(
+                        1 -> LogsScreen(
                             viewModel = viewModel,
                             modifier = Modifier.padding(innerPadding)
                         )
-                        2 -> SettingsScreen(
+                        2 -> AppListScreen(
+                            viewModel = viewModel,
+                            modifier = Modifier.padding(innerPadding)
+                        )
+                        3 -> SettingsScreen(
                             viewModel = viewModel,
                             modifier = Modifier.padding(innerPadding)
                         )

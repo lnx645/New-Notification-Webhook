@@ -73,4 +73,12 @@ class SettingsRepository(context: Context) {
     var isServiceRunning: Boolean
         get() = prefs.getBoolean(KEY_SERVICE_RUNNING, false)
         set(value) = prefs.edit().putBoolean(KEY_SERVICE_RUNNING, value).apply()
+
+    fun registerListener(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
+        prefs.registerOnSharedPreferenceChangeListener(listener)
+    }
+
+    fun unregisterListener(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
+        prefs.unregisterOnSharedPreferenceChangeListener(listener)
+    }
 }

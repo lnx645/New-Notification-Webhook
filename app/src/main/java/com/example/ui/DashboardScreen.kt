@@ -33,7 +33,8 @@ import java.util.*
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onNavigateToLogs: () -> Unit = {}
 ) {
     val context = LocalContext.current
     
@@ -416,8 +417,29 @@ fun DashboardScreen(
                     }
                 }
             } else {
-                items(logs) { log ->
+                val recentLogs = logs.take(5)
+                items(recentLogs) { log ->
                     LogItemRow(log)
+                }
+                if (logs.size > 5) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            TextButton(onClick = onNavigateToLogs) {
+                                Text("Lihat Semua Log (${logs.size})")
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Icon(
+                                    imageVector = Icons.Default.ArrowForward,
+                                    contentDescription = "Lihat Semua",
+                                    modifier = Modifier.size(16.dp)
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }

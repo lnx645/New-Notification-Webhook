@@ -117,7 +117,9 @@ class NotificationForwardWorker(
                                 responseBody = result.responseBody,
                                 error = null,
                                 retryCount = item.retryCount,
-                                duration = result.duration
+                                duration = result.duration,
+                                appName = item.appName,
+                                packageName = item.packageName
                             )
                         )
                     }
@@ -143,7 +145,9 @@ class NotificationForwardWorker(
                                     responseBody = result.responseBody,
                                     error = result.error ?: "Max retries exceeded",
                                     retryCount = item.retryCount,
-                                    duration = result.duration
+                                    duration = result.duration,
+                                    appName = item.appName,
+                                    packageName = item.packageName
                                 )
                             )
                         }
@@ -165,7 +169,9 @@ class NotificationForwardWorker(
                                     responseBody = result.responseBody,
                                     error = result.error ?: "Retry scheduled",
                                     retryCount = currentRetryCount,
-                                    duration = result.duration
+                                    duration = result.duration,
+                                    appName = item.appName,
+                                    packageName = item.packageName
                                 )
                             )
                         }

@@ -42,5 +42,7 @@ data class LogItem(
     val responseBody: String?,
     val error: String?,
     val retryCount: Int,
-    val duration: Long
+    val duration: Long,
+    val appName: String = "",
+    val packageName: String = ""
 )
