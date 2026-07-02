@@ -10,6 +10,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,6 +29,7 @@ import com.example.notification.NotificationListener
 import java.text.SimpleDateFormat
 import java.util.*
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel,
@@ -50,6 +52,7 @@ fun DashboardScreen(
     val queueItems by viewModel.queueItems.collectAsStateWithLifecycle()
     val logs by viewModel.logs.collectAsStateWithLifecycle()
     var selectedTab by remember { mutableIntStateOf(0) } // 0: Antrean, 1: Log Webhook
+    val isRefreshing by viewModel.isRefreshing.collectAsStateWithLifecycle()
 
     var isListenerEnabled by remember { mutableStateOf(false) }
 
@@ -64,12 +67,17 @@ fun DashboardScreen(
         viewModel.updateLastLogAndError()
     }
 
-    LazyColumn(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    PullToRefreshBox(
+        isRefreshing = isRefreshing,
+        onRefresh = { viewModel.refresh() },
+        modifier = modifier.fillMaxSize()
     ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
         if (!isListenerEnabled) {
             item {
                 Card(
@@ -314,7 +322,7 @@ fun DashboardScreen(
                         Tab(
                             selected = selectedTab == 0,
                             onClick = { selectedTab = 0 },
-                            text = { Text("Antrean Notifikasi (${queueItems.size})", style = MaterialTheme.typography.bodyMedium) }
+                            text = { Text("Antrean (${queueItems.size})", style = MaterialTheme.typography.bodyMedium) }
                         )
                         Tab(
                             selected = selectedTab == 1,
@@ -414,6 +422,7 @@ fun DashboardScreen(
             }
         }
     }
+}
 }
 
 @Composable

@@ -53,13 +53,36 @@ class DashboardViewModel(application: Application) : AndroidViewModel(applicatio
     private val _isTestingWebhook = MutableStateFlow(false)
     val isTestingWebhook: StateFlow<Boolean> = _isTestingWebhook.asStateFlow()
 
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
     init {
         loadInstalledApps()
-        updateLastLogAndError()
+        
+        // Auto-update last log and error in real-time when logs flow emits new items
+        viewModelScope.launch {
+            logRepo.allLogs.collect { logsList ->
+                _lastLog.value = logsList.firstOrNull()
+                
+                val failedLog = logsList.find { it.status == "Failed" || it.status == "Retry" }
+                _lastError.value = failedLog?.error
+            }
+        }
     }
 
     private fun <T> Flow<T>.asStateFlow(initialValue: T): StateFlow<T> {
         return this.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), initialValue)
+    }
+
+    fun refresh() {
+        viewModelScope.launch {
+            _isRefreshing.value = true
+            loadInstalledApps()
+            // We can also trigger a background run of the queue to check if any are pending
+            NotificationForwardWorker.enqueueOneTimeWork(app)
+            kotlinx.coroutines.delay(800)
+            _isRefreshing.value = false
+        }
     }
 
     fun updateLastLogAndError() {
